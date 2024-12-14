@@ -94,25 +94,25 @@ data class Repository(val id: Long, val address: String, val mirrors: List<Strin
         fingerprint, "", "", 0L, 0L, authentication)
     }
 
-    val defaultRepositories = listOf(run {
+    val defaultRepositories = listOf(
       defaultRepository("https://f-droid.org/repo", "F-Droid", "The official F-Droid Free Software repository. " +
         "Everything in this repository is always built from the source code.",
-        21, true, "43238D512C1E5EB2D6569F4A3AFBF5523418B82E0A3ED1552770ABB9A9C9CCAB", "")
-    }, run {
+        21, true, "43238D512C1E5EB2D6569F4A3AFBF5523418B82E0A3ED1552770ABB9A9C9CCAB", ""),
       defaultRepository("https://f-droid.org/archive", "F-Droid Archive", "The archive of the official F-Droid Free " +
         "Software repository. Apps here are old and can contain known vulnerabilities and security issues!",
-        21, false, "43238D512C1E5EB2D6569F4A3AFBF5523418B82E0A3ED1552770ABB9A9C9CCAB", "")
-    }, run {
+        21, false, "43238D512C1E5EB2D6569F4A3AFBF5523418B82E0A3ED1552770ABB9A9C9CCAB", ""),
       defaultRepository("https://guardianproject.info/fdroid/repo", "Guardian Project Official Releases", "The " +
         "official repository of The Guardian Project apps for use with the F-Droid client. Applications in this " +
         "repository are official binaries built by the original application developers and signed by the same key as " +
         "the APKs that are released in the Google Play Store.",
-        21, false, "B7C2EEFD8DAC7806AF67DFCD92EB18126BC08312A7F2D6F3862E46013C7A6135", "")
-    }, run {
+        21, false, "B7C2EEFD8DAC7806AF67DFCD92EB18126BC08312A7F2D6F3862E46013C7A6135", ""),
       defaultRepository("https://guardianproject.info/fdroid/archive", "Guardian Project Archive", "The official " +
         "repository of The Guardian Project apps for use with the F-Droid client. This contains older versions of " +
         "applications from the main repository.", 21, false,
-        "B7C2EEFD8DAC7806AF67DFCD92EB18126BC08312A7F2D6F3862E46013C7A6135", "")
-    })
+        "B7C2EEFD8DAC7806AF67DFCD92EB18126BC08312A7F2D6F3862E46013C7A6135", ""),
+      defaultRepository("https://www.cromite.org/fdroid/repo", "Cromite Browser", "Cromite a Bromite fork with ad "+
+        "blocking and privacy enhancements; take back your browser!", 21, false,
+        "49F37E74DEE483DCA2B991334FB5A0200787430D0B5F9A783DD5F13695E9517B", "")
+    )
   }
 }
