@@ -361,7 +361,7 @@ class SyncService: ConnectionService<SyncService.Binder>() {
       .setColor(ContextThemeWrapper(this, R.style.Theme_Main_Light)
         .getColorFromAttr(android.R.attr.colorAccent).defaultColor)
       .setContentIntent(PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java)
-        .setAction(MainActivity.ACTION_UPDATES), PendingIntent.FLAG_UPDATE_CURRENT))
+        .setAction(MainActivity.ACTION_UPDATES), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
       .setStyle(NotificationCompat.InboxStyle().applyHack {
         for (productItem in productItems.take(maxUpdates)) {
           val builder = SpannableStringBuilder(productItem.name)

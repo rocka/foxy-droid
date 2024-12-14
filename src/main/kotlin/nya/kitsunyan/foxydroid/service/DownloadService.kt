@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.net.Uri
 import android.os.Build
 import android.view.ContextThemeWrapper
@@ -178,8 +179,8 @@ class DownloadService: ConnectionService<DownloadService.Binder>() {
   private enum class ValidationError { INTEGRITY, FORMAT, METADATA, SIGNATURE, PERMISSIONS }
 
   private sealed class ErrorType {
-    object Network: ErrorType()
-    object Http: ErrorType()
+    data object Network: ErrorType()
+    data object Http: ErrorType()
     class Validation(val validateError: ValidationError): ErrorType()
   }
 
@@ -191,7 +192,7 @@ class DownloadService: ConnectionService<DownloadService.Binder>() {
       .setColor(ContextThemeWrapper(this, R.style.Theme_Main_Light)
         .getColorFromAttr(android.R.attr.colorAccent).defaultColor)
       .setContentIntent(PendingIntent.getBroadcast(this, 0, Intent(this, Receiver::class.java)
-        .setAction("$ACTION_OPEN.${task.packageName}"), PendingIntent.FLAG_UPDATE_CURRENT))
+      .setAction("$ACTION_OPEN.${task.packageName}"), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
       .apply {
         when (errorType) {
           is ErrorType.Network -> {
@@ -226,7 +227,7 @@ class DownloadService: ConnectionService<DownloadService.Binder>() {
         .getColorFromAttr(android.R.attr.colorAccent).defaultColor)
       .setContentIntent(PendingIntent.getBroadcast(this, 0, Intent(this, Receiver::class.java)
         .setAction("$ACTION_INSTALL.${task.packageName}")
-        .putExtra(EXTRA_CACHE_FILE_NAME, task.release.cacheFileName), PendingIntent.FLAG_UPDATE_CURRENT))
+        .putExtra(EXTRA_CACHE_FILE_NAME, task.release.cacheFileName), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
       .setContentTitle(getString(R.string.downloaded_FORMAT, task.name))
       .setContentText(getString(R.string.tap_to_install_DESC))
       .build())
@@ -288,12 +289,12 @@ class DownloadService: ConnectionService<DownloadService.Binder>() {
     .setColor(ContextThemeWrapper(this, R.style.Theme_Main_Light)
       .getColorFromAttr(android.R.attr.colorAccent).defaultColor)
     .addAction(0, getString(R.string.cancel), PendingIntent.getService(this, 0,
-      Intent(this, this::class.java).setAction(ACTION_CANCEL), PendingIntent.FLAG_UPDATE_CURRENT)) }
+      Intent(this, this::class.java).setAction(ACTION_CANCEL), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)) }
 
   private fun publishForegroundState(force: Boolean, state: State) {
     if (force || currentTask != null) {
       currentTask = currentTask?.copy(lastState = state)
-      startForeground(Common.NOTIFICATION_ID_SYNCING, stateNotificationBuilder.apply {
+       val notification = stateNotificationBuilder.apply {
         when (state) {
           is State.Connecting -> {
             setContentTitle(getString(R.string.downloading_FORMAT, state.name))
@@ -314,7 +315,16 @@ class DownloadService: ConnectionService<DownloadService.Binder>() {
             throw IllegalStateException()
           }
         }::class
-      }.build())
+      }.build()
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        startForeground(
+          Common.NOTIFICATION_ID_SYNCING,
+          notification,
+          ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+        )
+      } else {
+        startForeground(Common.NOTIFICATION_ID_SYNCING, notification)
+      }
       stateSubject.onNext(state)
     }
   }
