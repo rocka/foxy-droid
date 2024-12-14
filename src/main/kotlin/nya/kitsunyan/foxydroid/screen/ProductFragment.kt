@@ -35,6 +35,7 @@ import nya.kitsunyan.foxydroid.service.DownloadService
 import nya.kitsunyan.foxydroid.utility.RxUtils
 import nya.kitsunyan.foxydroid.utility.Utils
 import nya.kitsunyan.foxydroid.utility.extension.android.*
+import nya.kitsunyan.foxydroid.utility.extension.parcelable
 import nya.kitsunyan.foxydroid.widget.DividerItemDecoration
 
 class ProductFragment(): ScreenFragment(), ProductAdapter.Callbacks {
@@ -130,8 +131,8 @@ class ProductFragment(): ScreenFragment(), ProductAdapter.Callbacks {
       addOnScrollListener(scrollListener)
       addItemDecoration(adapter.gridItemDecoration)
       addItemDecoration(DividerItemDecoration(context, adapter::configureDivider))
-      savedInstanceState?.getParcelable<ProductAdapter.SavedState>(STATE_ADAPTER)?.let(adapter::restoreState)
-      layoutManagerState = savedInstanceState?.getParcelable(STATE_LAYOUT_MANAGER)
+      savedInstanceState?.parcelable<ProductAdapter.SavedState>(STATE_ADAPTER)?.let(adapter::restoreState)
+      layoutManagerState = savedInstanceState?.parcelable(STATE_LAYOUT_MANAGER)
       recyclerView = this
     }, FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
 

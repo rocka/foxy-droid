@@ -44,7 +44,7 @@ class ProductsAdapter(private val onClick: (ProductItem) -> Unit):
 
   private class LoadingViewHolder(context: Context): RecyclerView.ViewHolder(FrameLayout(context)) {
     init {
-      itemView as FrameLayout
+      val itemView = itemView as FrameLayout
       val progressBar = ProgressBar(itemView.context)
       itemView.addView(progressBar, FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
         FrameLayout.LayoutParams.WRAP_CONTENT).apply { gravity = Gravity.CENTER })
@@ -58,7 +58,7 @@ class ProductsAdapter(private val onClick: (ProductItem) -> Unit):
       get() = itemView as TextView
 
     init {
-      itemView as TextView
+      val itemView = itemView as TextView
       itemView.gravity = Gravity.CENTER
       itemView.resources.sizeScaled(20).let { itemView.setPadding(it, it, it, it) }
       itemView.typeface = TypefaceExtra.light
@@ -123,7 +123,7 @@ class ProductsAdapter(private val onClick: (ProductItem) -> Unit):
   override fun onCreateViewHolder(parent: ViewGroup, viewType: ViewType): RecyclerView.ViewHolder {
     return when (viewType) {
       ViewType.PRODUCT -> ProductViewHolder(parent.inflate(R.layout.product_item)).apply {
-        itemView.setOnClickListener { onClick(getProductItem(adapterPosition)) }
+        itemView.setOnClickListener { onClick(getProductItem(bindingAdapterPosition)) }
       }
       ViewType.LOADING -> LoadingViewHolder(parent.context)
       ViewType.EMPTY -> EmptyViewHolder(parent.context)

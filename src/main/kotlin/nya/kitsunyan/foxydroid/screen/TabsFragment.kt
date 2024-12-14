@@ -40,6 +40,8 @@ import nya.kitsunyan.foxydroid.service.SyncService
 import nya.kitsunyan.foxydroid.utility.RxUtils
 import nya.kitsunyan.foxydroid.utility.Utils
 import nya.kitsunyan.foxydroid.utility.extension.android.*
+import nya.kitsunyan.foxydroid.utility.extension.parcelable
+import nya.kitsunyan.foxydroid.utility.extension.parcelableArrayList
 import nya.kitsunyan.foxydroid.utility.extension.resources.*
 import nya.kitsunyan.foxydroid.widget.DividerItemDecoration
 import nya.kitsunyan.foxydroid.widget.FocusSearchView
@@ -215,9 +217,9 @@ class TabsFragment: ScreenFragment() {
       (tab.layoutParams as LinearLayout.LayoutParams).weight = 1f
     }
 
-    showSections = savedInstanceState?.getByte(STATE_SHOW_SECTIONS)?.toInt() ?: 0 != 0
-    sections = savedInstanceState?.getParcelableArrayList<ProductItem.Section>(STATE_SECTIONS).orEmpty()
-    section = savedInstanceState?.getParcelable(STATE_SECTION) ?: ProductItem.Section.All
+    showSections = (savedInstanceState?.getByte(STATE_SHOW_SECTIONS)?.toInt() ?: 0) != 0
+    sections = savedInstanceState?.parcelableArrayList<ProductItem.Section>(STATE_SECTIONS).orEmpty()
+    section = savedInstanceState?.parcelable(STATE_SECTION) ?: ProductItem.Section.All
     layout.sectionChange.setOnClickListener { showSections = sections
       .any { it !is ProductItem.Section.All } && !showSections }
 
@@ -340,7 +342,9 @@ class TabsFragment: ScreenFragment() {
     }
   }
 
+  @Suppress("OVERRIDE_DEPRECATION")
   override fun onAttachFragment(childFragment: Fragment) {
+    @Suppress("DEPRECATION")
     super.onAttachFragment(childFragment)
 
     if (view != null && childFragment is ProductsFragment) {
@@ -540,6 +544,7 @@ class TabsFragment: ScreenFragment() {
 
     override fun setAlpha(alpha: Int) = Unit
     override fun setColorFilter(colorFilter: ColorFilter?) = Unit
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
   }
 
@@ -553,7 +558,7 @@ class TabsFragment: ScreenFragment() {
         get() = itemView as TextView
 
       init {
-        itemView as TextView
+        val itemView = itemView as TextView
         itemView.gravity = Gravity.CENTER_VERTICAL
         itemView.resources.sizeScaled(16).let { itemView.setPadding(it, 0, it, 0) }
         itemView.setTextColor(context.getColorFromAttr(android.R.attr.textColorPrimary))
@@ -587,7 +592,7 @@ class TabsFragment: ScreenFragment() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: ViewType): RecyclerView.ViewHolder {
       return SectionViewHolder(parent.context).apply {
-        itemView.setOnClickListener { onClick(sections()[adapterPosition]) }
+        itemView.setOnClickListener { onClick(sections()[bindingAdapterPosition]) }
       }
     }
 

@@ -21,7 +21,7 @@ object RxUtils {
     }
   }
 
-  private fun <T, R> managedSingle(create: () -> T, cancel: (T) -> Unit, execute: (T) -> R): Single<R> {
+  private fun <T, R : Any> managedSingle(create: () -> T, cancel: (T) -> Unit, execute: (T) -> R): Single<R> {
     return Single.create {
       val task = create()
       val thread = Thread.currentThread()
@@ -52,7 +52,7 @@ object RxUtils {
     }
   }
 
-  fun <R> managedSingle(execute: () -> R): Single<R> {
+  fun <R : Any> managedSingle(execute: () -> R): Single<R> {
     return managedSingle({ Unit }, { }, { execute() })
   }
 
@@ -60,7 +60,7 @@ object RxUtils {
     return managedSingle(create, Call::cancel, Call::execute)
   }
 
-  fun <T> querySingle(query: (CancellationSignal) -> T): Single<T> {
+  fun <T : Any> querySingle(query: (CancellationSignal) -> T): Single<T> {
     return Single.create {
       val cancellationSignal = CancellationSignal()
       it.setCancellable {

@@ -19,6 +19,7 @@ import nya.kitsunyan.foxydroid.database.CursorOwner
 import nya.kitsunyan.foxydroid.utility.KParcelable
 import nya.kitsunyan.foxydroid.utility.Utils
 import nya.kitsunyan.foxydroid.utility.extension.android.*
+import nya.kitsunyan.foxydroid.utility.extension.parcelableArrayList
 import nya.kitsunyan.foxydroid.utility.extension.resources.*
 import nya.kitsunyan.foxydroid.utility.extension.text.*
 
@@ -28,7 +29,7 @@ abstract class ScreenActivity: FragmentActivity() {
   }
 
   sealed class SpecialIntent {
-    object Updates: SpecialIntent()
+    data object Updates: SpecialIntent()
     class Install(val packageName: String?, val cacheFileName: String?): SpecialIntent()
   }
 
@@ -64,14 +65,11 @@ abstract class ScreenActivity: FragmentActivity() {
       return supportFragmentManager.findFragmentById(R.id.main_content)
     }
 
-  override fun attachBaseContext(base: Context) {
-    super.attachBaseContext(Utils.configureLocale(base))
-  }
-
   override fun onCreate(savedInstanceState: Bundle?) {
     setTheme(Preferences[Preferences.Key.Theme].getResId(resources.configuration))
     super.onCreate(savedInstanceState)
 
+    @Suppress("DEPRECATION")
     window.decorView.systemUiVisibility = window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
       View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
     addContentView(FrameLayout(this).apply { id = R.id.main_content },
@@ -87,7 +85,7 @@ abstract class ScreenActivity: FragmentActivity() {
         .findFragmentByTag(CursorOwner::class.java.name) as CursorOwner
     }
 
-    savedInstanceState?.getParcelableArrayList<FragmentStackItem>(STATE_FRAGMENT_STACK)
+    savedInstanceState?.parcelableArrayList<FragmentStackItem>(STATE_FRAGMENT_STACK)
       ?.let { fragmentStack += it }
     if (savedInstanceState == null) {
       replaceFragment(TabsFragment(), null)
@@ -102,11 +100,13 @@ abstract class ScreenActivity: FragmentActivity() {
     outState.putParcelableArrayList(STATE_FRAGMENT_STACK, ArrayList(fragmentStack))
   }
 
+  @Suppress("OVERRIDE_DEPRECATION")
   override fun onBackPressed() {
     val currentFragment = currentFragment
     if (!(currentFragment is ScreenFragment && currentFragment.onBackPressed())) {
       hideKeyboard()
       if (!popFragment()) {
+        @Suppress("DEPRECATION")
         super.onBackPressed()
       }
     }
@@ -137,7 +137,7 @@ abstract class ScreenActivity: FragmentActivity() {
   private fun popFragment(): Boolean {
     return fragmentStack.isNotEmpty() && run {
       val stackItem = fragmentStack.removeAt(fragmentStack.size - 1)
-      val fragment = Class.forName(stackItem.className).newInstance() as Fragment
+      val fragment = Class.forName(stackItem.className).getDeclaredConstructor().newInstance() as Fragment
       stackItem.arguments?.let(fragment::setArguments)
       stackItem.savedState?.let(fragment::setInitialSavedState)
       replaceFragment(fragment, false)
@@ -150,7 +150,9 @@ abstract class ScreenActivity: FragmentActivity() {
       ?.hideSoftInputFromWindow((currentFocus ?: window.decorView).windowToken, 0)
   }
 
+  @Suppress("OVERRIDE_DEPRECATION")
   override fun onAttachFragment(fragment: Fragment) {
+    @Suppress("DEPRECATION")
     super.onAttachFragment(fragment)
     hideKeyboard()
   }

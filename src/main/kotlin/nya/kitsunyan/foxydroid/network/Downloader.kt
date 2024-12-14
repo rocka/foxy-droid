@@ -89,7 +89,7 @@ object Downloader {
           if (result.code == 304) {
             Result(it.code, lastModified, entityTag)
           } else {
-            val body = it.body!!
+            val body = it.body
             val append = start != null && it.header("Content-Range") != null
             val progressStart = if (append && start != null) start else 0L
             val progressTotal = body.contentLength().let { if (it >= 0L) it else null }

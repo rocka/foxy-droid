@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.view.ContextThemeWrapper
 import androidx.core.app.NotificationCompat
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -361,8 +362,13 @@ class DownloadService: ConnectionService<DownloadService.Binder>() {
         currentTask = CurrentTask(task, disposable, initialState)
       } else if (started) {
         started = false
-        stopForeground(true)
-        stopSelf()
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+              stopForeground(STOP_FOREGROUND_REMOVE)
+          } else {
+            @Suppress("DEPRECATION")
+            stopForeground(true)
+          }
+          stopSelf()
       }
     }
   }

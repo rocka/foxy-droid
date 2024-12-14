@@ -77,8 +77,8 @@ fun Resources.sizeScaled(size: Int): Int {
 }
 
 fun TextView.setTextSizeScaled(size: Int) {
-  val realSize = (size * resources.displayMetrics.scaledDensity).roundToInt()
-  setTextSize(TypedValue.COMPLEX_UNIT_PX, realSize.toFloat())
+  val realSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, size.toFloat(), resources.displayMetrics)
+  setTextSize(TypedValue.COMPLEX_UNIT_PX, realSize)
 }
 
 fun ViewGroup.inflate(layoutResId: Int): View {

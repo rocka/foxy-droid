@@ -13,6 +13,7 @@ import nya.kitsunyan.foxydroid.entity.Release
 import nya.kitsunyan.foxydroid.utility.KParcelable
 import nya.kitsunyan.foxydroid.utility.PackageItemResolver
 import nya.kitsunyan.foxydroid.utility.extension.android.*
+import nya.kitsunyan.foxydroid.utility.extension.parcelable
 import nya.kitsunyan.foxydroid.utility.extension.text.*
 
 class MessageDialog(): DialogFragment() {
@@ -124,7 +125,7 @@ class MessageDialog(): DialogFragment() {
 
   override fun onCreateDialog(savedInstanceState: Bundle?): AlertDialog {
     val dialog = AlertDialog.Builder(requireContext())
-    when (val message = requireArguments().getParcelable<Message>(EXTRA_MESSAGE)!!) {
+    when (val message = requireArguments().parcelable<Message>(EXTRA_MESSAGE)!!) {
       is Message.DeleteRepositoryConfirm -> {
         dialog.setTitle(R.string.confirmation)
         dialog.setMessage(R.string.delete_repository_DESC)

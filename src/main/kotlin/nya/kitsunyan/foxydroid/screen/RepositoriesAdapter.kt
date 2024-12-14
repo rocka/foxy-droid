@@ -39,7 +39,7 @@ class RepositoriesAdapter(private val onClick: (Repository) -> Unit,
       itemView.setOnClickListener { onClick(getRepository(adapterPosition)) }
       enabled.setOnCheckedChangeListener { _, isChecked ->
         if (listenSwitch) {
-          if (!onSwitch(getRepository(adapterPosition), isChecked)) {
+          if (!onSwitch(getRepository(bindingAdapterPosition), isChecked)) {
             listenSwitch = false
             enabled.isChecked = !isChecked
             listenSwitch = true

@@ -1,5 +1,6 @@
 package nya.kitsunyan.foxydroid.index
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import io.reactivex.rxjava3.core.Observable
@@ -24,6 +25,7 @@ import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import javax.xml.parsers.SAXParserFactory
 
+@SuppressLint("StaticFieldLeak")
 object RepositoryUpdater {
   enum class Stage {
     DOWNLOAD, PROCESS, MERGE, COMMIT
@@ -157,7 +159,7 @@ object RepositoryUpdater {
                 certificate: String, version: Int, timestamp: Long) {
                 changedRepository = repository.update(mirrors, name, description, version,
                   lastModified, entityTag, timestamp)
-                certificateFromIndex = certificate.toLowerCase(Locale.US)
+                certificateFromIndex = certificate.lowercase(Locale.US)
               }
 
               override fun onProduct(product: Product) {

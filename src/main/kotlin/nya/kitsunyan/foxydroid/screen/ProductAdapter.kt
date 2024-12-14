@@ -333,7 +333,7 @@ class ProductAdapter(private val callbacks: Callbacks, private val columns: Int)
       get() = itemView as TextView
 
     init {
-      itemView as TextView
+      val itemView = itemView as TextView
       itemView.typeface = TypefaceExtra.medium
       itemView.setTextSizeScaled(14)
       itemView.setTextColor(itemView.context.getColorFromAttr(android.R.attr.colorAccent))
@@ -350,7 +350,7 @@ class ProductAdapter(private val callbacks: Callbacks, private val columns: Int)
       get() = itemView as TextView
 
     init {
-      itemView as TextView
+      val itemView = itemView as TextView
       itemView.setTextSizeScaled(14)
       itemView.setTextColor(itemView.context.getColorFromAttr(android.R.attr.textColorPrimary))
       itemView.resources.sizeScaled(16).let { itemView.setPadding(it, it, it, it) }
@@ -427,7 +427,7 @@ class ProductAdapter(private val callbacks: Callbacks, private val columns: Int)
     var gridCount = -1
 
     init {
-      itemView as FrameLayout
+      val itemView = itemView as FrameLayout
       itemView.foreground = itemView.context.getDrawableFromAttr(android.R.attr.selectableItemBackground)
       val backgroundColor = itemView.context.getColorFromAttr(android.R.attr.colorBackground).defaultColor
       val accentColor = itemView.context.getColorFromAttr(android.R.attr.colorAccent).defaultColor
@@ -481,7 +481,7 @@ class ProductAdapter(private val callbacks: Callbacks, private val columns: Int)
     val packageName: TextView
 
     init {
-      itemView as LinearLayout
+      val itemView = itemView as LinearLayout
       itemView.orientation = LinearLayout.VERTICAL
       itemView.gravity = Gravity.CENTER
       itemView.resources.sizeScaled(20).let { itemView.setPadding(it, it, it, it) }
@@ -529,7 +529,7 @@ class ProductAdapter(private val callbacks: Callbacks, private val columns: Int)
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
       val holder = parent.getChildViewHolder(view)
       if (holder is ScreenshotViewHolder) {
-        val position = holder.adapterPosition
+        val position = holder.bindingAdapterPosition
         if (position >= 0) {
           val first = items.subList(0, position).indexOfLast { it !is Item.ScreenshotItem } + 1
           val gridCount = items.subList(first, items.size).indexOfFirst { it !is Item.ScreenshotItem }
@@ -850,7 +850,7 @@ class ProductAdapter(private val callbacks: Callbacks, private val columns: Int)
       }
       ViewType.SWITCH -> SwitchViewHolder(parent.inflate(R.layout.switch_item)).apply {
         itemView.setOnClickListener {
-          val switchItem = items[adapterPosition] as Item.SwitchItem
+          val switchItem = items[bindingAdapterPosition] as Item.SwitchItem
           val productPreference = when (switchItem.switchType) {
             SwitchType.IGNORE_ALL_UPDATES -> {
               ProductPreferences[switchItem.packageName].let { it.copy(ignoreUpdates = !it.ignoreUpdates) }
@@ -868,20 +868,20 @@ class ProductAdapter(private val callbacks: Callbacks, private val columns: Int)
       }
       ViewType.SECTION -> SectionViewHolder(parent.inflate(R.layout.section_item)).apply {
         itemView.setOnClickListener {
-          val position = adapterPosition
+          val position = bindingAdapterPosition
           val sectionItem = items[position] as Item.SectionItem
           if (sectionItem.items.isNotEmpty()) {
             expanded += sectionItem.expandType
             items[position] = Item.SectionItem(sectionItem.sectionType, sectionItem.expandType, emptyList(),
               sectionItem.items.size + sectionItem.collapseCount)
-            notifyItemChanged(adapterPosition, Payload.REFRESH)
+            notifyItemChanged(bindingAdapterPosition, Payload.REFRESH)
             items.addAll(position + 1, sectionItem.items)
             notifyItemRangeInserted(position + 1, sectionItem.items.size)
           } else if (sectionItem.collapseCount > 0) {
             expanded -= sectionItem.expandType
             items[position] = Item.SectionItem(sectionItem.sectionType, sectionItem.expandType,
               items.subList(position + 1, position + 1 + sectionItem.collapseCount).toList(), 0)
-            notifyItemChanged(adapterPosition, Payload.REFRESH)
+            notifyItemChanged(bindingAdapterPosition, Payload.REFRESH)
             repeat(sectionItem.collapseCount) { items.removeAt(position + 1) }
             notifyItemRangeRemoved(position + 1, sectionItem.collapseCount)
           }
@@ -889,7 +889,7 @@ class ProductAdapter(private val callbacks: Callbacks, private val columns: Int)
       }
       ViewType.EXPAND -> ExpandViewHolder(parent.context).apply {
         itemView.setOnClickListener {
-          val position = adapterPosition
+          val position = bindingAdapterPosition
           val expandItem = items[position] as Item.ExpandItem
           items.removeAt(position)
           expanded += expandItem.expandType
@@ -913,32 +913,32 @@ class ProductAdapter(private val callbacks: Callbacks, private val columns: Int)
       ViewType.TEXT -> TextViewHolder(parent.context)
       ViewType.LINK -> LinkViewHolder(parent.inflate(R.layout.link_item)).apply {
         itemView.setOnClickListener {
-          val linkItem = items[adapterPosition] as Item.LinkItem
+          val linkItem = items[bindingAdapterPosition] as Item.LinkItem
           if (linkItem.uri?.let { callbacks.onUriClick(it, false) } != true) {
             linkItem.displayLink?.let { copyLinkToClipboard(itemView.context, it) }
           }
         }
         itemView.setOnLongClickListener {
-          val linkItem = items[adapterPosition] as Item.LinkItem
+          val linkItem = items[bindingAdapterPosition] as Item.LinkItem
           linkItem.displayLink?.let { copyLinkToClipboard(itemView.context, it) }
           true
         }
       }
       ViewType.PERMISSIONS -> PermissionsViewHolder(parent.inflate(R.layout.permissions_item)).apply {
         itemView.setOnClickListener {
-          val permissionsItem = items[adapterPosition] as Item.PermissionsItem
+          val permissionsItem = items[bindingAdapterPosition] as Item.PermissionsItem
           callbacks.onPermissionsClick(permissionsItem.group?.name, permissionsItem.permissions.map { it.name })
         }
       }
       ViewType.SCREENSHOT -> ScreenshotViewHolder(parent.context).apply {
         itemView.setOnClickListener {
-          val screenshotItem = items[adapterPosition] as Item.ScreenshotItem
+          val screenshotItem = items[bindingAdapterPosition] as Item.ScreenshotItem
           callbacks.onScreenshotClick(screenshotItem.screenshot)
         }
       }
       ViewType.RELEASE -> ReleaseViewHolder(parent.inflate(R.layout.release_item)).apply {
         itemView.setOnClickListener {
-          val releaseItem = items[adapterPosition] as Item.ReleaseItem
+          val releaseItem = items[bindingAdapterPosition] as Item.ReleaseItem
           callbacks.onReleaseClick(releaseItem.release)
         }
       }
@@ -1097,7 +1097,7 @@ class ProductAdapter(private val callbacks: Callbacks, private val columns: Int)
             prefixes.find { permission.name.startsWith(it) }?.let {
               val transform = permission.name.substring(it.length)
               if (transform.matches("[A-Z_]+".toRegex())) {
-                transform.split("_").joinToString(separator = " ") { it.toLowerCase(Locale.US) }
+                transform.split("_").joinToString(separator = " ") { it.lowercase(Locale.US) }
               } else {
                 null
               }
@@ -1106,7 +1106,7 @@ class ProductAdapter(private val callbacks: Callbacks, private val columns: Int)
           if (label == null) {
             Pair(false, permission.name)
           } else {
-            Pair(true, label.first().toUpperCase() + label.substring(1, label.length))
+            Pair(true, label.first().uppercaseChar() + label.substring(1, label.length))
           }
         }
         val builder = SpannableStringBuilder()
@@ -1171,7 +1171,7 @@ class ProductAdapter(private val callbacks: Callbacks, private val columns: Int)
         holder.signature.visibility = if (item.showSignature && item.release.signature.isNotEmpty())
           View.VISIBLE else View.GONE
         if (item.showSignature && item.release.signature.isNotEmpty()) {
-          val bytes = item.release.signature.toUpperCase(Locale.US).windowed(2, 2, false).take(8)
+          val bytes = item.release.signature.uppercase(Locale.US).windowed(2, 2, false).take(8)
           val signature = bytes.joinToString(separator = " ")
           val builder = SpannableStringBuilder(context.getString(R.string.signature_FORMAT, signature))
           val index = builder.indexOf(signature)

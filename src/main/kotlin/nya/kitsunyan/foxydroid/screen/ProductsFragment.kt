@@ -17,6 +17,7 @@ import nya.kitsunyan.foxydroid.database.CursorOwner
 import nya.kitsunyan.foxydroid.database.Database
 import nya.kitsunyan.foxydroid.entity.ProductItem
 import nya.kitsunyan.foxydroid.utility.RxUtils
+import nya.kitsunyan.foxydroid.utility.extension.parcelable
 import nya.kitsunyan.foxydroid.widget.DividerItemDecoration
 import nya.kitsunyan.foxydroid.widget.RecyclerFastScroller
 
@@ -90,10 +91,10 @@ class ProductsFragment(): ScreenFragment(), CursorOwner.Callback {
     super.onViewCreated(view, savedInstanceState)
 
     currentSearchQuery = savedInstanceState?.getString(STATE_CURRENT_SEARCH_QUERY).orEmpty()
-    currentSection = savedInstanceState?.getParcelable(STATE_CURRENT_SECTION) ?: ProductItem.Section.All
+    currentSection = savedInstanceState?.parcelable(STATE_CURRENT_SECTION) ?: ProductItem.Section.All
     currentOrder = savedInstanceState?.getString(STATE_CURRENT_ORDER)
       ?.let(ProductItem.Order::valueOf) ?: ProductItem.Order.NAME
-    layoutManagerState = savedInstanceState?.getParcelable(STATE_LAYOUT_MANAGER)
+    layoutManagerState = savedInstanceState?.parcelable(STATE_LAYOUT_MANAGER)
 
     screenActivity.cursorOwner.attach(this, request)
     repositoriesDisposable = Observable.just(Unit)

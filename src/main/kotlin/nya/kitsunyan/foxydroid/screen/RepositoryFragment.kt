@@ -139,7 +139,7 @@ class RepositoryFragment(): ScreenFragment() {
         }
       } else {
         val fingerprint = SpannableStringBuilder(repository.fingerprint.windowed(2, 2, false)
-          .take(32).joinToString(separator = " ") { it.toUpperCase(Locale.US) })
+          .take(32).joinToString(separator = " ") { it.uppercase(Locale.US) })
         fingerprint.setSpan(TypefaceSpan("monospace"), 0, fingerprint.length,
           SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE)
         layout.addTitleText(R.string.fingerprint, fingerprint)
@@ -160,6 +160,7 @@ class RepositoryFragment(): ScreenFragment() {
 
   internal fun onDeleteConfirm() {
     if (syncConnection.binder?.deleteRepository(repositoryId) == true) {
+      @Suppress("DEPRECATION")
       requireActivity().onBackPressed()
     }
   }

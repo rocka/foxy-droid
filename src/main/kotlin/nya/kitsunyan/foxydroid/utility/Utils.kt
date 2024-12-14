@@ -66,30 +66,6 @@ object Utils {
     }
   }
 
-  fun configureLocale(context: Context): Context {
-    val supportedLanguages = BuildConfig.LANGUAGES.toSet()
-    val configuration = context.resources.configuration
-    val currentLocales = if (Android.sdk(24)) {
-      val localesList = configuration.locales
-      (0 until localesList.size()).map(localesList::get)
-    } else {
-      @Suppress("DEPRECATION")
-      listOf(configuration.locale)
-    }
-    val compatibleLocales = currentLocales
-      .filter { it.language in supportedLanguages }
-      .let { if (it.isEmpty()) listOf(Locale.US) else it }
-    Locale.setDefault(compatibleLocales.first())
-    val newConfiguration = Configuration(configuration)
-    if (Android.sdk(24)) {
-      newConfiguration.setLocales(LocaleList(*compatibleLocales.toTypedArray()))
-    } else {
-      @Suppress("DEPRECATION")
-      newConfiguration.locale = compatibleLocales.first()
-    }
-    return context.createConfigurationContext(newConfiguration)
-  }
-
   fun areAnimationsEnabled(context: Context): Boolean {
     return if (Android.sdk(26)) {
       ValueAnimator.areAnimatorsEnabled()

@@ -7,6 +7,7 @@ import android.app.job.JobParameters
 import android.app.job.JobService
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.view.ContextThemeWrapper
@@ -220,7 +221,7 @@ class SyncService: ConnectionService<SyncService.Binder>() {
     .setColor(ContextThemeWrapper(this, R.style.Theme_Main_Light)
       .getColorFromAttr(android.R.attr.colorAccent).defaultColor)
     .addAction(0, getString(R.string.cancel), PendingIntent.getService(this, 0,
-      Intent(this, this::class.java).setAction(ACTION_CANCEL), PendingIntent.FLAG_UPDATE_CURRENT)) }
+      Intent(this, this::class.java).setAction(ACTION_CANCEL), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE )) }
 
   private fun publishForegroundState(force: Boolean, state: State) {
     if (force || currentTask?.lastState != state) {
@@ -335,7 +336,12 @@ class SyncService: ConnectionService<SyncService.Binder>() {
           val needStop = started == Started.MANUAL
           started = Started.NO
           if (needStop) {
-            stopForeground(true)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+              stopForeground(STOP_FOREGROUND_REMOVE)
+            } else {
+              @Suppress("DEPRECATION")
+              stopForeground(true)
+            }
             stopSelf()
           }
         }

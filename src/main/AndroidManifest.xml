@@ -5,10 +5,13 @@
   package="nya.kitsunyan.foxydroid">
 
   <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
   <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
   <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
   <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
   <application
     android:name=".MainApplication"
@@ -20,6 +23,7 @@
     tools:ignore="GoogleAppIndexingWarning">
 
     <receiver
+      android:exported="true"
       android:name=".MainApplication$BootReceiver">
 
       <intent-filter>
@@ -30,6 +34,7 @@
 
     <activity
       android:name=".MainActivity"
+      android:exported="true"
       android:launchMode="singleTask"
       android:windowSoftInputMode="adjustResize">
 
@@ -69,7 +74,8 @@
     </activity>
 
     <service
-      android:name=".service.SyncService" />
+      android:name=".service.SyncService"
+      android:foregroundServiceType="dataSync"/>
 
     <service
       android:name=".service.SyncService$Job"

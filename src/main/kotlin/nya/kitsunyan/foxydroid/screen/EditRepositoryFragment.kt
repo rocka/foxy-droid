@@ -149,7 +149,7 @@ class EditRepositoryFragment(): ScreenFragment() {
 
       override fun afterTextChanged(s: Editable) {
         val inputString = s.toString()
-        val outputString = inputString.toUpperCase(Locale.US)
+        val outputString = inputString.uppercase(Locale.US)
           .filter(validChar).windowed(2, 2, true).take(32).joinToString(separator = " ")
         if (inputString != outputString) {
           val inputStart = logicalPosition(inputString, Selection.getSelectionStart(s))
@@ -253,7 +253,9 @@ class EditRepositoryFragment(): ScreenFragment() {
     checkDisposable = null
   }
 
+  @Suppress("OVERRIDE_DEPRECATION")
   override fun onActivityCreated(savedInstanceState: Bundle?) {
+    @Suppress("DEPRECATION")
     super.onActivityCreated(savedInstanceState)
 
     invalidateAddress()
@@ -447,6 +449,7 @@ class EditRepositoryFragment(): ScreenFragment() {
         if (repositoryId == null && changedRepository.enabled) {
           binder.sync(changedRepository)
         }
+        @Suppress("DEPRECATION")
         requireActivity().onBackPressed()
       }
     } else {

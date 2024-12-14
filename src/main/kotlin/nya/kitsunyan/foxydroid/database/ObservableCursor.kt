@@ -29,7 +29,7 @@ class ObservableCursor(cursor: Cursor, private val observable: (register: Boolea
     contentObservable.unregisterObserver(observer)
   }
 
-  @Suppress("DEPRECATION")
+  @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
   override fun requery(): Boolean {
     if (!registered) {
       observable(true, onChange)
@@ -38,7 +38,7 @@ class ObservableCursor(cursor: Cursor, private val observable: (register: Boolea
     return super.requery()
   }
 
-  @Suppress("DEPRECATION")
+  @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
   override fun deactivate() {
     super.deactivate()
     deactivateOrClose()
